@@ -26,7 +26,7 @@ class ViewController: UIViewController {
         textField.backgroundColor = UIColor.yellow
         self.view.addSubview(textField)
         
-        self.view.addKeyboardListener()
+        self.view.kl.addKeyboardListener()
         
         
     }

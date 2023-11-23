@@ -6,24 +6,35 @@
 //
 
 import UIKit
-private var UIViewKeyboardListenerKey = "UIViewKeyboardListenerKey"
+private var UIViewKeyboardListenerKey: Void?
 public extension UIView {
+    var kl: UIViewKeyboardListenerWrapper {
+        get { UIViewKeyboardListenerWrapper(self) }
+        set {}
+    }
+}
+
+public struct UIViewKeyboardListenerWrapper {
+    let base: UIView
+    init(_ base: UIView) {
+        self.base = base
+    }
     
     /// Add keyboard listener.
     /// Once detected keyboard covering `UITextField/UITextView` will automatically change the current view's `transform`.
     /// - Parameter keyboardSpacing: The spacing from the top of the keyboard to the bottom of the current view.
-    func addKeyboardListener(_ keyboardSpacing: CGFloat = 0.0) {
-        let listener = UIViewKeyboardListener(transformView: self)
+    public func addKeyboardListener(_ keyboardSpacing: CGFloat = 0.0) {
+        let listener = UIViewKeyboardListener(transformView: base)
         listener.keyboardSpacing = keyboardSpacing
-        objc_setAssociatedObject(self, &UIViewKeyboardListenerKey, listener, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(base, &UIViewKeyboardListenerKey, listener, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
     /// Remove keyboard listener.
-    func removeKeyboardListener() {
-        objc_setAssociatedObject(self, &UIViewKeyboardListenerKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    public func removeKeyboardListener() {
+        objc_setAssociatedObject(base, &UIViewKeyboardListenerKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
-}
 
+}
 private class UIViewKeyboardListener {
     var keyboardSpacing: CGFloat = 0.0
     var transformView: UIView!
@@ -41,21 +52,12 @@ private class UIViewKeyboardListener {
     }
 
     func addKeyboardObserver() {
-        #if swift(>=4.2)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.textInputDidBeginEditing(_:)), name: UITextField.textDidBeginEditingNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.textInputDidEndEditing(_:)), name: UITextField.textDidEndEditingNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.textInputDidBeginEditing(_:)), name: UITextView.textDidBeginEditingNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.textInputDidEndEditing(_:)), name: UITextView.textDidEndEditingNotification, object: nil)
-        #elseif swift(>=4.0)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.textInputDidBeginEditing(_:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.textInputDidEndEditing(_:)), name: NSNotification.Name.UITextFieldTextDidEndEditing, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.textInputDidBeginEditing(_:)), name: NSNotification.Name.UITextViewTextDidBeginEditing, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.textInputDidEndEditing(_:)), name: NSNotification.Name.UITextViewTextDidEndEditing, object: nil)
-        #endif
     }
     
     func removeKeyboardObserver() {
@@ -72,22 +74,12 @@ private class UIViewKeyboardListener {
             return
         }
         var duration = 0.0
-        #if swift(>=4.2)
         guard let rectValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {
             return
         }
         if let durationValue = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber {
             duration = durationValue.doubleValue
         }
-
-        #elseif swift(>=4.0)
-        guard let rectValue = userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue else {
-            return
-        }
-        if let durationValue = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber {
-            duration = durationValue.doubleValue
-        }
-        #endif
         let convertRect = observerView.convert(observerView.bounds, to: currentWindow)
         let telMaxY = convertRect.maxY
         let keyboardH = rectValue.cgRectValue.size.height
@@ -117,16 +109,9 @@ private class UIViewKeyboardListener {
             return
         }
         var duration = 0.0
-        #if swift(>=4.2)
         if let durationValue = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber {
             duration = durationValue.doubleValue
         }
-        #elseif swift(>=4.0)
-        if let durationValue = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber {
-            duration = durationValue.doubleValue
-        }
-        #endif
-
         if (duration <= 0.0){
             duration = 0.25
         }
