@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "KeyboardListener"
-  s.version      = "1.0.0"
+  s.version      = "2.0.0"
   s.summary      = "Prevent keyboard from covering UITextField/UITextView"
   s.homepage     = "https://github.com/iLiuChang/KeyboardListener"
   s.license      = "MIT"
@@ -9,5 +9,5 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/iLiuChang/KeyboardListener.git", :tag => s.version }
   s.source_files  =  "KeyboardListener/**/*.{swift}"
   s.requires_arc = true
-  s.swift_version = "4.0"
+  s.swift_version = "4.2"
 end
