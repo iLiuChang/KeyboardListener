@@ -38,7 +38,7 @@ public struct UIViewKeyboardListenerWrapper {
 private class UIViewKeyboardListener {
     var keyboardSpacing: CGFloat = 0.0
     var transformView: UIView!
-    var currentTextInput: UIView?
+    var isCurrentTextInput: Bool = false
     var currentUserInfo: [AnyHashable : Any]?
 
     convenience init(transformView: UIView) {
@@ -65,11 +65,11 @@ private class UIViewKeyboardListener {
     }
     
     func makeKeyboardWillShow() {
-        guard let currentWindow = self.transformView.window else {
+        guard let currentWindow = self.transformView.window, currentWindow.isKeyWindow == true else {
             return
         }
 
-        guard let observerView = self.currentTextInput,
+        guard isCurrentTextInput,
               let userInfo = self.currentUserInfo else {
             return
         }
@@ -80,10 +80,10 @@ private class UIViewKeyboardListener {
         if let durationValue = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber {
             duration = durationValue.doubleValue
         }
-        let convertRect = observerView.convert(observerView.bounds, to: currentWindow)
+        let convertRect = transformView.convert(transformView.bounds, to: currentWindow)
         let telMaxY = convertRect.maxY
         let keyboardH = rectValue.cgRectValue.size.height
-        let keyboardY = UIScreen.main.bounds.size.height-keyboardH
+        let keyboardY = currentWindow.bounds.size.height-keyboardH
         if (duration <= 0.0){
             duration = 0.25
         }
@@ -92,14 +92,9 @@ private class UIViewKeyboardListener {
                 self.transformView.transform = CGAffineTransform(translationX: 0, y: keyboardY - telMaxY - self.keyboardSpacing)
             }
         }
-        self.currentUserInfo = nil
-        self.currentTextInput = nil
     }
     
     @objc func keyboardWillShow(_ notification: Foundation.Notification) {
-        if (self.transformView.window == nil) {
-            return
-        }
         self.currentUserInfo = notification.userInfo
         makeKeyboardWillShow()
     }
@@ -123,17 +118,30 @@ private class UIViewKeyboardListener {
     }
     
     @objc func textInputDidBeginEditing(_ notification: Foundation.Notification) {
-        guard let view = notification.object as? UIView else {
+        guard let view = notification.object as? UIView, view.window?.isKeyWindow == true else {
             return
         }
-        if (self.transformView.window != nil) {
-            self.currentTextInput = view
+        print("textInputDidBeginEditing:\(view)")
+
+        if view == self.transformView {
+            self.isCurrentTextInput = true
+        } else {
+            self.isCurrentTextInput = view.isDescendant(of: self.transformView)
         }
+
         makeKeyboardWillShow()
     }
 
     @objc func textInputDidEndEditing(_ notification: Foundation.Notification) {
-        self.currentTextInput = nil
+        guard let view = notification.object as? UIView, view.window?.isKeyWindow == true else {
+            return
+        }
+
+        print("textInputDidEndEditing:\(view)")
+        if view == self.transformView || view.isDescendant(of: self.transformView) {
+            self.isCurrentTextInput = false
+        }
+
     }
 
 }

@@ -15,7 +15,7 @@
 
 @property(nonatomic, weak) UIView *transformView;
 
-@property(nonatomic, weak) UIView *currentTextInput;
+@property(nonatomic, assign) BOOL isCurrentTextInput;
 
 @property (nonatomic, strong) NSDictionary *userInfo;
 
@@ -44,16 +44,19 @@
 }
 
 - (void)makeKeyboardWillShow {
-    UIView *observerView = self.currentTextInput;
-    if (!observerView || !self.userInfo) {
+    if (!self.transformView.window || !self.transformView.window.isKeyWindow) {
         return;
     }
 
-    CGRect convertRect = [observerView convertRect:observerView.bounds toView:self.transformView.window];
+    if (!self.isCurrentTextInput || !self.userInfo) {
+        return;
+    }
+    
+    CGRect convertRect = [self.transformView convertRect:self.transformView.bounds toView:self.transformView.window];
 
     CGFloat telMaxY = CGRectGetMaxY(convertRect);
     CGFloat keyboardH = [self.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    CGFloat keyboardY = [UIScreen mainScreen].bounds.size.height - keyboardH;
+    CGFloat keyboardY = self.transformView.window.bounds.size.height - keyboardH;
     double duration = [self.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     if (duration <= 0.0){
         duration = 0.25;
@@ -63,14 +66,9 @@
             self.transformView.transform = CGAffineTransformMakeTranslation(0,  keyboardY - telMaxY - self.keyboardSpacing);
         }];
     }
-    self.currentTextInput = nil;
-    self.userInfo = nil;
 }
 
 -(void)keyboardWillShow:(NSNotification *)note{
-    if (!self.transformView.window) {
-        return;
-    }
     self.userInfo = note.userInfo;
     [self makeKeyboardWillShow];
 }
@@ -89,15 +87,24 @@
 }
 
 -(void)textInputDidBeginEditing:(NSNotification *)note {
-    if (!self.transformView.window) {
-        return;
+    if ([note.object isKindOfClass:UIView.class] && ((UIView *)note.object).window.isKeyWindow) {
+        UIView *view = (UIView *)note.object;
+        if (view == self.transformView) {
+            self.isCurrentTextInput = YES;
+        } else {
+            self.isCurrentTextInput = [view isDescendantOfView:self.transformView];
+        }
+        [self makeKeyboardWillShow];
     }
-    self.currentTextInput = note.object;
-    [self makeKeyboardWillShow];
 }
 
 -(void)textInputDidEndEditing:(NSNotification *)note {
-    self.currentTextInput = nil;
+    if ([note.object isKindOfClass:UIView.class] && ((UIView *)note.object).window.isKeyWindow) {
+        UIView *view = (UIView *)note.object;
+        if (view == self.transformView || [view isDescendantOfView:self.transformView]) {
+            self.isCurrentTextInput = NO;
+        }
+    }
 }
 
 - (void)dealloc {

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "LCKeyboardListener"
-  s.version      = "1.1.0"
+  s.version      = "1.2.0"
   s.summary      = "Prevent keyboard from covering UITextField/UITextView"
   s.homepage     = "https://github.com/iLiuChang/KeyboardListener"
   s.license      = "MIT"

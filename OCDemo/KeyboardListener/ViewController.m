@@ -28,7 +28,9 @@
     t2.frame = CGRectMake(100, 0, 100, 50);
     t2.backgroundColor = [UIColor grayColor];
     [contentView addSubview:t2];
-    [self.view lc_addKeyboardListener];
+    [contentView lc_addKeyboardListener];
+    [t lc_addKeyboardListener];
+
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
