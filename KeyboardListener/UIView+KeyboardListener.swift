@@ -87,8 +87,12 @@ private class UIViewKeyboardListener {
         if (duration <= 0.0){
             duration = 0.25
         }
+        
+        let curveRaw = (userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt) ?? UIView.AnimationOptions.curveEaseInOut.rawValue
+        let curve = UIView.AnimationOptions(rawValue: curveRaw << 16)
+
         if (telMaxY > keyboardY) {
-            UIView.animate(withDuration: duration) {
+            UIView.animate(withDuration: duration, delay: 0, options: [curve, .beginFromCurrentState]) {
                 self.transformView.transform = CGAffineTransform(translationX: 0, y: keyboardY - telMaxY - self.keyboardSpacing)
             }
         }
@@ -111,7 +115,10 @@ private class UIViewKeyboardListener {
             duration = 0.25
         }
 
-        UIView.animate(withDuration: duration) {
+        let curveRaw = (notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt) ?? UIView.AnimationOptions.curveEaseInOut.rawValue
+        let curve = UIView.AnimationOptions(rawValue: curveRaw << 16)
+
+        UIView.animate(withDuration: duration, delay: 0, options: [curve, .beginFromCurrentState]) {
             self.transformView.transform = CGAffineTransform.identity
         }
 
@@ -121,8 +128,7 @@ private class UIViewKeyboardListener {
         guard let view = notification.object as? UIView, view.window?.isKeyWindow == true else {
             return
         }
-        print("textInputDidBeginEditing:\(view)")
-
+        
         if view == self.transformView {
             self.isCurrentTextInput = true
         } else {
@@ -137,7 +143,6 @@ private class UIViewKeyboardListener {
             return
         }
 
-        print("textInputDidEndEditing:\(view)")
         if view == self.transformView || view.isDescendant(of: self.transformView) {
             self.isCurrentTextInput = false
         }
