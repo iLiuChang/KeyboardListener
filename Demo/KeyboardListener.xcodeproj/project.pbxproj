@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28F72B042E58222200FDF228 /* UIView+LCKeyboardListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F72B022E58222200FDF228 /* UIView+LCKeyboardListener.m */; };
 		583D8DF12845CB0D0061C10E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 583D8DF02845CB0D0061C10E /* AppDelegate.swift */; };
 		583D8DF52845CB0D0061C10E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 583D8DF42845CB0D0061C10E /* ViewController.swift */; };
 		583D8DF82845CB0D0061C10E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 583D8DF62845CB0D0061C10E /* Main.storyboard */; };
@@ -17,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		28F72B012E58222200FDF228 /* UIView+LCKeyboardListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+LCKeyboardListener.h"; sourceTree = "<group>"; };
+		28F72B022E58222200FDF228 /* UIView+LCKeyboardListener.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+LCKeyboardListener.m"; sourceTree = "<group>"; };
 		583D8DED2845CB0D0061C10E /* KeyboardListener.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeyboardListener.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		583D8DF02845CB0D0061C10E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		583D8DF42845CB0D0061C10E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -39,6 +42,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		28F72B032E58222200FDF228 /* LCKeyboardListener */ = {
+			isa = PBXGroup;
+			children = (
+				28F72B012E58222200FDF228 /* UIView+LCKeyboardListener.h */,
+				28F72B022E58222200FDF228 /* UIView+LCKeyboardListener.m */,
+			);
+			name = LCKeyboardListener;
+			path = ../LCKeyboardListener;
+			sourceTree = SOURCE_ROOT;
+		};
 		583D8DE42845CB0D0061C10E = {
 			isa = PBXGroup;
 			children = (
@@ -58,6 +71,7 @@
 		583D8DEF2845CB0D0061C10E /* KeyboardListener */ = {
 			isa = PBXGroup;
 			children = (
+				28F72B032E58222200FDF228 /* LCKeyboardListener */,
 				583D8E042845CB9D0061C10E /* KeyboardListener */,
 				583D8DF02845CB0D0061C10E /* AppDelegate.swift */,
 				583D8DF42845CB0D0061C10E /* ViewController.swift */,
@@ -151,6 +165,7 @@
 			files = (
 				583D8E2C284613130061C10E /* FirstViewController.swift in Sources */,
 				583D8DF52845CB0D0061C10E /* ViewController.swift in Sources */,
+				28F72B042E58222200FDF228 /* UIView+LCKeyboardListener.m in Sources */,
 				583D8DF12845CB0D0061C10E /* AppDelegate.swift in Sources */,
 				583D8E082845CFC00061C10E /* UIView+KeyboardListener.swift in Sources */,
 			);
@@ -308,6 +323,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = liuchang.KeyboardListener;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/../LCKeyboardListener/UIView+LCKeyboardListener.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -327,6 +343,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = liuchang.KeyboardListener;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/../LCKeyboardListener/UIView+LCKeyboardListener.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

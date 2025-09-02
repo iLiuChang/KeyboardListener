@@ -61,10 +61,17 @@
     if (duration <= 0.0){
         duration = 0.25;
     }
+    
+    NSInteger curve = [self.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue];
+    UIViewAnimationOptions options = (curve << 16) | UIViewAnimationOptionBeginFromCurrentState;
+
     if (telMaxY > keyboardY) {
-        [UIView animateWithDuration:duration animations:^{
+        [UIView animateWithDuration:duration
+                                  delay:0
+                                options:options
+                             animations:^{
             self.transformView.transform = CGAffineTransformMakeTranslation(0,  keyboardY - telMaxY - self.keyboardSpacing);
-        }];
+        } completion:nil];
     }
 }
 
@@ -81,9 +88,16 @@
     if (duration <= 0.0) {
         duration = 0.25;
     };
-    [UIView animateWithDuration:duration animations:^{
+    
+    NSInteger curve = [note.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue];
+    UIViewAnimationOptions options = (curve << 16) | UIViewAnimationOptionBeginFromCurrentState;
+
+    [UIView animateWithDuration:duration
+                              delay:0
+                            options:options
+                         animations:^{
         self.transformView.transform = CGAffineTransformIdentity;
-    }];
+    } completion:nil];
 }
 
 -(void)textInputDidBeginEditing:(NSNotification *)note {
